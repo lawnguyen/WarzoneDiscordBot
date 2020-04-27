@@ -2,8 +2,7 @@ import pytesseract
 import cv2
 import sys
 from PIL import Image
-from desktopmagic.screengrab_win32 import (
-    getScreenAsImage, getDisplayRects, getRectAsImage)
+from desktopmagic.screengrab_win32 import (getDisplayRects, getRectAsImage)
 
 def main(display_number):
     # Get the rect of the display
@@ -14,20 +13,17 @@ def main(display_number):
     width, height = im.size
 
     _crop_left = 0
-    _crop_top = int(height / 2)
-    _crop_right = int(width / 2)
+    _crop_top = int((height / 3) * 2)
+    _crop_right = int((width / 5))
     _crop_bottom = height
 
     cropped_im = im.crop((_crop_left, _crop_top, _crop_right, _crop_bottom))
+    #cropped_im = cropped_im.convert("LA")
     cropped_im.show()
 
-    # template match
-
-    # Ocr
-
-# Save the entire virtual screen as a PNG
-getScreenAsImage().save("../data/screenshot.png", format="png")
-
+    # OCR
+    pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
+    print(pytesseract.image_to_string(cropped_im))
 
 
 
