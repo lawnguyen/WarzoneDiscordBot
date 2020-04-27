@@ -1,6 +1,7 @@
 import pytesseract
 import cv2
 import sys
+from PIL import Image
 from desktopmagic.screengrab_win32 import (
     getScreenAsImage, getDisplayRects, getRectAsImage)
 
@@ -8,21 +9,17 @@ def main(display_number):
     # Get the rect of the display
     _display_rect = getDisplayRects()[display_number - 1]
 
-    # Get the third quarter region of display rect
-    # rect points are relative to (0,0)
-    _rect_left = _display_rect[0]
-    _rect_top = _display_rect[1]
-    _rect_right = _display_rect[2]
-    _rect_bottom = _display_rect[3]
+    # Take and crop screenshot to the third quadrant
+    im = getRectAsImage(_display_rect)
+    width, height = im.size
 
-    _third_quadrant_rect = (
-        _rect_left, 
-        int(_rect_bottom / 2),
-        int(_rect_left / 2),
-        _rect_bottom)
+    _crop_left = 0
+    _crop_top = int(height / 2)
+    _crop_right = int(width / 2)
+    _crop_bottom = height
 
-    # Save a screenshot of the the lower left region of display
-    getRectAsImage(_third_quadrant_rect).save("../data/screenshot.png", format="png")
+    cropped_im = im.crop((_crop_left, _crop_top, _crop_right, _crop_bottom))
+    cropped_im.show()
 
     # template match
 
