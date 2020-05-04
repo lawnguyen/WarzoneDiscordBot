@@ -4,48 +4,70 @@ import sys
 import time
 import numpy as np
 from PIL import Image
+from datetime import date
 from desktopmagic.screengrab_win32 import (getDisplayRects, getRectAsImage)
 
 def preprocess_image(im, width, height, left_ratio, top_ratio, right_ratio, bottom_ratio):
-    RESIZE_FACTOR = 2
+    RESIZE_FACTOR = 3
     IMAGE_CONVERSION_MODE = "LA"
 
+    # Crop image to bounding boxes
     _crop_left = int(width * left_ratio)
     _crop_top = int(height * top_ratio)
     _crop_right = int(width * right_ratio)
     _crop_bottom = int(height * bottom_ratio)
 
     _cropped_im = im.crop((_crop_left, _crop_top, _crop_right, _crop_bottom))
-    _cropped_im = _cropped_im.convert(IMAGE_CONVERSION_MODE)
+
+    # Resize
     _larger_size = tuple(RESIZE_FACTOR * x for x in _cropped_im.size)
     _cropped_im = _cropped_im.resize(_larger_size, Image.ANTIALIAS)
+
+    # Convert to opencv consumable type, in grayscale
+    _open_cv_im = cv2.cvtColor(np.array(_cropped_im), cv2.COLOR_RGB2GRAY)
+
+    # Apply automatic Otsu thresholding
+    #_, thr = cv2.threshold(_open_cv_im, 0, 255, cv2.THRESH_OTSU)
+
+    # cv2.imshow('win', _open_cv_im)     
+    # if cv2.waitKey(0) & 0xff == 27: 
+    #     cv2.destroyAllWindows()    
     #_cropped_im.show()
 
-    return _cropped_im
+    return _open_cv_im
 
 
-def main(display_number):
+def main(display_number, iteration):
     # Get the rect of the display
     _display_rect = getDisplayRects()[display_number - 1]
 
     _im = getRectAsImage(_display_rect)
     _width, _height = _im.size
 
+    _today = str(date.today())
+
     # P1
     _p1_preprocessed_im = preprocess_image(_im, _width, _height, 0.034, 0.95, 0.08, 0.97)
+    cv2.imwrite("{}-p1-{}.png".format(_today, iteration), _p1_preprocessed_im) 
     # P2
     _p2_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.88, 0.08, 0.9)
+    cv2.imwrite("{}-p2-{}.png".format(_today, iteration), _p2_preprocessed_im) 
     # P3
     _p3_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.818, 0.08, 0.84)
+    cv2.imwrite("{}-p3-{}.png".format(_today, iteration), _p3_preprocessed_im) 
     # P4
-    _p4_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.818, 0.08, 0.84)
+    #_p4_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.818, 0.08, 0.84)
+    #cv2.imwrite("{}-p4-{}.png".format(_today, iteration), _p4_preprocessed_im)
 
     pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
+    print("{} - p1 - iteration {}".format(_today, iteration))
     print(pytesseract.image_to_string(_p1_preprocessed_im))
+    print("{} - p2 - iteration {}".format(_today, iteration))
     print(pytesseract.image_to_string(_p2_preprocessed_im))
+    print("{} - p3 - iteration {}".format(_today, iteration))
     print(pytesseract.image_to_string(_p3_preprocessed_im))
-    print(pytesseract.image_to_string(_p4_preprocessed_im))
-
+    #print("{} - p4 - iteration {}".format(_today, iteration))
+    #print(pytesseract.image_to_string(_p4_preprocessed_im))
 
 if __name__ == "__main__": 
     if (len(sys.argv) == 2):
@@ -53,5 +75,9 @@ if __name__ == "__main__":
     else:
         display_number = int(input("Display number that modern warfare is running on (e.g. 2): "))
         
-    time.sleep(3)
-    main(display_number)
+    time.sleep(10)
+    i = 0
+    while (1):
+        i += 1
+        main(display_number, i)
+        time.sleep(30)
