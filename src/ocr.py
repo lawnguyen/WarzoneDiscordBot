@@ -19,10 +19,10 @@ def preprocess_image(im, width, height, left_ratio, top_ratio, right_ratio, bott
     _cropped_im = _cropped_im.convert(IMAGE_CONVERSION_MODE)
     _larger_size = tuple(RESIZE_FACTOR * x for x in _cropped_im.size)
     _cropped_im = _cropped_im.resize(_larger_size, Image.ANTIALIAS)
-    _cropped_im.show()
+    #_cropped_im.show()
 
-    pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
-    print(pytesseract.image_to_string(_cropped_im))
+    return _cropped_im
+
 
 def main(display_number):
     # Get the rect of the display
@@ -32,13 +32,19 @@ def main(display_number):
     _width, _height = _im.size
 
     # P1
-    preprocess_image(_im, _width, _height, 0.034, 0.95, 0.08, 0.97)
+    _p1_preprocessed_im = preprocess_image(_im, _width, _height, 0.034, 0.95, 0.08, 0.97)
     # P2
-    preprocess_image(_im, _width, _height, 0.035, 0.88, 0.08, 0.9)
+    _p2_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.88, 0.08, 0.9)
     # P3
-    preprocess_image(_im, _width, _height, 0.035, 0.818, 0.08, 0.84)
+    _p3_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.818, 0.08, 0.84)
     # P4
-    preprocess_image(_im, _width, _height, 0.035, 0.818, 0.08, 0.84)
+    _p4_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.818, 0.08, 0.84)
+
+    pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
+    print(pytesseract.image_to_string(_p1_preprocessed_im))
+    print(pytesseract.image_to_string(_p2_preprocessed_im))
+    print(pytesseract.image_to_string(_p3_preprocessed_im))
+    print(pytesseract.image_to_string(_p4_preprocessed_im))
 
 
 if __name__ == "__main__": 
@@ -46,5 +52,6 @@ if __name__ == "__main__":
         display_number = int(sys.argv[1])
     else:
         display_number = int(input("Display number that modern warfare is running on (e.g. 2): "))
-
+        
+    time.sleep(3)
     main(display_number)
