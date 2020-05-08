@@ -39,6 +39,11 @@ def preprocess_image(im, width, height, left_ratio, top_ratio, right_ratio, bott
 
     return thr
 
+def parse_read(str):
+    if (str.isdigit()):
+        return int(str)
+    return 0
+
 
 def main(display_number, iteration):
     # Get the rect of the display
@@ -65,14 +70,23 @@ def main(display_number, iteration):
         cv2.imwrite("{}-p4-{}.png".format(_today, iteration), _p4_preprocessed_im)
 
     pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
+    _p1_read = pytesseract.image_to_string(_p1_preprocessed_im)
+    _p2_read = pytesseract.image_to_string(_p2_preprocessed_im)
+    _p3_read = pytesseract.image_to_string(_p3_preprocessed_im)
+    _p4_read = pytesseract.image_to_string(_p4_preprocessed_im)
+
     print("{} - p1 - iteration {}".format(_today, iteration))
-    print(pytesseract.image_to_string(_p1_preprocessed_im))
+    print(_p1_read)
     print("{} - p2 - iteration {}".format(_today, iteration))
-    print(pytesseract.image_to_string(_p2_preprocessed_im))
+    print(_p2_read)
     print("{} - p3 - iteration {}".format(_today, iteration))
-    print(pytesseract.image_to_string(_p3_preprocessed_im))
+    print(_p3_read)
     print("{} - p4 - iteration {}".format(_today, iteration))
-    print(pytesseract.image_to_string(_p4_preprocessed_im))
+    print(_p4_read)
+
+    total = parse_read(_p1_read) + parse_read(_p2_read) + parse_read(_p3_read) + parse_read(_p4_read)
+    print("TOTAL: ")
+    print(total)
 
 def menu_choice():
     print("(0) - Only print statements")
