@@ -31,13 +31,15 @@ def preprocess_image(im, width, height, left_ratio, top_ratio, right_ratio, bott
     # Apply automatic Otsu thresholding
     _, thr = cv2.threshold(_open_cv_im, 0, 255, cv2.THRESH_OTSU)
 
-    if (MODE == "2" or MODE == player):
-        cv2.imshow('win', _open_cv_im)  
-        #if cv2.waitKey(0) & 0xff == 27:
-        time.sleep(10)
-        cv2.destroyAllWindows()
+    # Invert image
+    _inverted_im = cv2.bitwise_not(thr)
 
-    return thr
+    if (MODE == "2" or MODE == player):
+        cv2.imshow('win', _inverted_im)  
+        if cv2.waitKey(0) & 0xff == 27:
+            cv2.destroyAllWindows()
+
+    return _inverted_im
 
 def parse_read(str):
     if (str.isdigit()):
@@ -87,6 +89,7 @@ def main(display_number, iteration):
     total = parse_read(_p1_read) + parse_read(_p2_read) + parse_read(_p3_read) + parse_read(_p4_read)
     print("TOTAL: ")
     print(total)
+    print()
 
 def menu_choice():
     print("(0) - Only print statements")
