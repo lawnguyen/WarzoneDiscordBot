@@ -8,6 +8,9 @@ from datetime import date
 from desktopmagic.screengrab_win32 import (getDisplayRects, getRectAsImage)
 
 MODE = "0"
+BUY_BACK_COUNT = 0
+BUY_BACK_COST = 4500
+LOADOUT_COST = 10000
 
 def preprocess_image(im, width, height, left_ratio, top_ratio, right_ratio, bottom_ratio, player):
     RESIZE_FACTOR = 3
@@ -42,6 +45,11 @@ def preprocess_image(im, width, height, left_ratio, top_ratio, right_ratio, bott
     return _inverted_im
 
 def parse_read(str):
+    # Remove all whitespace
+    _str = "".join(str.split())
+
+    if ("$" in str):
+        BUY_BACK_COUNT += 1
     if (str.isdigit()):
         return int(str)
     return 0
@@ -91,6 +99,9 @@ def main(display_number, iteration):
     print(_p4_read)
 
     total = parse_read(_p1_read) + parse_read(_p2_read) + parse_read(_p3_read) + parse_read(_p4_read)
+    # TODO: Consume BUY_BACK_COUNT here to determine players that need to be bought back
+    BUY_BACK_COUNT = 0
+
     print("TOTAL: ")
     print(total)
     print()
