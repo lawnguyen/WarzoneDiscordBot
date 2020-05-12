@@ -35,7 +35,7 @@ def preprocess_image(im, width, height, left_ratio, top_ratio, right_ratio, bott
     _inverted_im = cv2.bitwise_not(thr)
 
     if (MODE == "2" or MODE == player):
-        cv2.imshow('win', _inverted_im)  
+        cv2.imshow("win", _inverted_im)  
         if cv2.waitKey(0) & 0xff == 27:
             cv2.destroyAllWindows()
 
@@ -72,14 +72,14 @@ def main(display_number, iteration):
         cv2.imwrite("{}-p4-{}.png".format(_today, iteration), _p4_preprocessed_im)
 
     pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
-    _p1_read = pytesseract.image_to_string(_p1_preprocessed_im, lang='eng', \
-        config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$')
-    _p2_read = pytesseract.image_to_string(_p2_preprocessed_im, lang='eng', \
-        config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$')
-    _p3_read = pytesseract.image_to_string(_p3_preprocessed_im, lang='eng', \
-        config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$')
-    _p4_read = pytesseract.image_to_string(_p4_preprocessed_im, lang='eng', \
-        config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$')
+    _p1_read = pytesseract.image_to_string(_p1_preprocessed_im, lang="eng", \
+        config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$")
+    _p2_read = pytesseract.image_to_string(_p2_preprocessed_im, lang="eng", \
+        config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$")
+    _p3_read = pytesseract.image_to_string(_p3_preprocessed_im, lang="eng", \
+        config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$")
+    _p4_read = pytesseract.image_to_string(_p4_preprocessed_im, lang="eng", \
+        config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$")
 
     print("{} - p1 - iteration {}".format(_today, iteration))
     print(_p1_read)
@@ -100,6 +100,7 @@ def menu_choice():
     print("(1) - Write screenshots to file system")
     print("(2) - Show screenshots in photo viewer")
     print("(3) - Show screenshots for specific player")
+    print("(4) - One iteration at a time")
 
     _choice = input("Select mode: ")
 
@@ -129,4 +130,6 @@ if __name__ == "__main__":
     while (1):
         _i += 1
         main(_display_number, _i)
+        if (MODE == "4"):
+            input("Press Enter to continue...")
         time.sleep(10)
