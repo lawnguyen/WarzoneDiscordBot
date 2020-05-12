@@ -80,14 +80,16 @@ def main(display_number, iteration):
         cv2.imwrite("{}-p4-{}.png".format(_today, iteration), _p4_preprocessed_im)
 
     pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
-    _p1_read = pytesseract.image_to_string(_p1_preprocessed_im, lang="eng", \
-        config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$")
-    _p2_read = pytesseract.image_to_string(_p2_preprocessed_im, lang="eng", \
-        config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$")
-    _p3_read = pytesseract.image_to_string(_p3_preprocessed_im, lang="eng", \
-        config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$")
-    _p4_read = pytesseract.image_to_string(_p4_preprocessed_im, lang="eng", \
-        config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$")
+    _tess_config = "--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$"
+
+    _p1_read = pytesseract.image_to_string(_p1_preprocessed_im, lang = "eng", \
+        config = _tess_config)
+    _p2_read = pytesseract.image_to_string(_p2_preprocessed_im, lang = "eng", \
+        config = _tess_config)
+    _p3_read = pytesseract.image_to_string(_p3_preprocessed_im, lang = "eng", \
+        config = _tess_config)
+    _p4_read = pytesseract.image_to_string(_p4_preprocessed_im, lang = "eng", \
+        config = _tess_config)
 
     print("{} - p1 - iteration {}".format(_today, iteration))
     print(_p1_read)
@@ -135,8 +137,10 @@ if __name__ == "__main__":
         _display_number = int(input("Display number that modern warfare is running on (e.g. 2): "))
 
     MODE = menu_choice()
-        
+    
+    # TODO: Add game-has-started detection, for now just wait 10 seconds until executing
     time.sleep(10)
+
     _i = 0
     while (1):
         _i += 1
