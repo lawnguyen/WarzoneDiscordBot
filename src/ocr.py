@@ -1,13 +1,16 @@
-import pytesseract
-import cv2
 import sys
 import time
+from datetime import date
+
+import cv2
+import numpy as np
+import pytesseract
+from desktopmagic.screengrab_win32 import getDisplayRects, getRectAsImage
+from PIL import Image
+
 import constants
 import menu
-import numpy as np
-from PIL import Image
-from datetime import date
-from desktopmagic.screengrab_win32 import (getDisplayRects, getRectAsImage)
+
 
 class Processor:
 
