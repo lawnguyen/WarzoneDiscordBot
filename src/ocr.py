@@ -72,10 +72,14 @@ def main(display_number, iteration):
         cv2.imwrite("{}-p4-{}.png".format(_today, iteration), _p4_preprocessed_im)
 
     pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
-    _p1_read = pytesseract.image_to_string(_p1_preprocessed_im)
-    _p2_read = pytesseract.image_to_string(_p2_preprocessed_im)
-    _p3_read = pytesseract.image_to_string(_p3_preprocessed_im)
-    _p4_read = pytesseract.image_to_string(_p4_preprocessed_im)
+    _p1_read = pytesseract.image_to_string(_p1_preprocessed_im, lang='eng', \
+        config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$')
+    _p2_read = pytesseract.image_to_string(_p2_preprocessed_im, lang='eng', \
+        config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$')
+    _p3_read = pytesseract.image_to_string(_p3_preprocessed_im, lang='eng', \
+        config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$')
+    _p4_read = pytesseract.image_to_string(_p4_preprocessed_im, lang='eng', \
+        config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$')
 
     print("{} - p1 - iteration {}".format(_today, iteration))
     print(_p1_read)
@@ -125,4 +129,4 @@ if __name__ == "__main__":
     while (1):
         _i += 1
         main(_display_number, _i)
-        time.sleep(30)
+        time.sleep(10)
