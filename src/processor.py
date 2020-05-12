@@ -10,6 +10,7 @@ from PIL import Image
 
 import constants
 import menu
+from cropRatio import CropRatio
 
 class Processor:
 
@@ -28,13 +29,17 @@ class Processor:
         today = str(date.today())
 
         # P1
-        p1_preprocessed_im = self._preprocess_image(im, width, height, 0.034, 0.95, 0.08, 0.965, "p1")
+        p1_crop_ratio = CropRatio(0.034, 0.95, 0.08, 0.965)
+        p1_preprocessed_im = self._preprocess_image(im, width, height, p1_crop_ratio, "p1")
         # P2
-        p2_preprocessed_im = self._preprocess_image(im, width, height, 0.035, 0.88, 0.08, 0.895, "p2")
+        p2_crop_ratio = CropRatio(0.035, 0.88, 0.08, 0.895)
+        p2_preprocessed_im = self._preprocess_image(im, width, height, p2_crop_ratio, "p2")
         # P3
-        p3_preprocessed_im = self._preprocess_image(im, width, height, 0.035, 0.818, 0.08, 0.84, "p3")
+        p3_crop_ratio = CropRatio(0.035, 0.818, 0.08, 0.84)
+        p3_preprocessed_im = self._preprocess_image(im, width, height, p3_crop_ratio, "p3")
         # P4
-        p4_preprocessed_im = self._preprocess_image(im, width, height, 0.035, 0.75, 0.08, 0.768, "p4")
+        p4_crop_ratio = CropRatio(0.035, 0.75, 0.08, 0.768)
+        p4_preprocessed_im = self._preprocess_image(im, width, height, p4_crop_ratio, "p4")
 
         if (self._mode == "1"):
             cv2.imwrite("{}-p1-{}.png".format(today, iteration), p1_preprocessed_im)
@@ -72,25 +77,16 @@ class Processor:
         print(total)
         print()
 
-    def _preprocess_image(
-        self, 
-        im, 
-        width, 
-        height, 
-        left_ratio, 
-        top_ratio, 
-        right_ratio, 
-        bottom_ratio, 
-        player):
+    def _preprocess_image(self, im, width, height, crop_ratio, player):
 
         RESIZE_FACTOR = 3
         IMAGE_CONVERSION_MODE = "LA"
 
         # Crop image to bounding boxes
-        crop_left = int(width * left_ratio)
-        crop_top = int(height * top_ratio)
-        crop_right = int(width * right_ratio)
-        crop_bottom = int(height * bottom_ratio)
+        crop_left = int(width * crop_ratio.left)
+        crop_top = int(height * crop_ratio.top)
+        crop_right = int(width * crop_ratio.right)
+        crop_bottom = int(height * crop_ratio.bottom)
 
         cropped_im = im.crop((crop_left, crop_top, crop_right, crop_bottom))
 
