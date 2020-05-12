@@ -2,149 +2,143 @@ import pytesseract
 import cv2
 import sys
 import time
+import constants
+import menu
 import numpy as np
 from PIL import Image
 from datetime import date
 from desktopmagic.screengrab_win32 import (getDisplayRects, getRectAsImage)
 
-MODE = "0"
-BUY_BACK_COUNT = 0
-BUY_BACK_COST = 4500
-LOADOUT_COST = 10000
+class Processor:
 
-def preprocess_image(im, width, height, left_ratio, top_ratio, right_ratio, bottom_ratio, player):
-    RESIZE_FACTOR = 3
-    IMAGE_CONVERSION_MODE = "LA"
+    def __init__(self, display_number, mode):
+        self._display_number = display_number
+        self._mode = mode
+        self._buy_back_count = 0
+    
+    def run(self, iteration):
+        # Get the rect of the display
+        display_rect = getDisplayRects()[self._display_number - 1]
 
-    # Crop image to bounding boxes
-    _crop_left = int(width * left_ratio)
-    _crop_top = int(height * top_ratio)
-    _crop_right = int(width * right_ratio)
-    _crop_bottom = int(height * bottom_ratio)
+        im = getRectAsImage(display_rect)
+        width, height = im.size
 
-    _cropped_im = im.crop((_crop_left, _crop_top, _crop_right, _crop_bottom))
+        today = str(date.today())
 
-    # Resize
-    _larger_size = tuple(RESIZE_FACTOR * x for x in _cropped_im.size)
-    _cropped_im = _cropped_im.resize(_larger_size, Image.ANTIALIAS)
+        # P1
+        p1_preprocessed_im = self._preprocess_image(im, width, height, 0.034, 0.95, 0.08, 0.965, "p1")
+        # P2
+        p2_preprocessed_im = self._preprocess_image(im, width, height, 0.035, 0.88, 0.08, 0.895, "p2")
+        # P3
+        p3_preprocessed_im = self._preprocess_image(im, width, height, 0.035, 0.818, 0.08, 0.84, "p3")
+        # P4
+        p4_preprocessed_im = self._preprocess_image(im, width, height, 0.035, 0.75, 0.08, 0.768, "p4")
 
-    # Convert to opencv consumable type, in grayscale
-    _open_cv_im = cv2.cvtColor(np.array(_cropped_im), cv2.COLOR_RGB2GRAY)
+        if (self._mode == "1"):
+            cv2.imwrite("{}-p1-{}.png".format(today, iteration), p1_preprocessed_im)
+            cv2.imwrite("{}-p2-{}.png".format(today, iteration), p2_preprocessed_im)
+            cv2.imwrite("{}-p3-{}.png".format(today, iteration), p3_preprocessed_im)
+            cv2.imwrite("{}-p4-{}.png".format(today, iteration), p4_preprocessed_im)
 
-    # Apply automatic Otsu thresholding
-    _, thr = cv2.threshold(_open_cv_im, 0, 255, cv2.THRESH_OTSU)
+        pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
+        tess_config = "--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$"
 
-    # Invert image
-    _inverted_im = cv2.bitwise_not(thr)
+        p1_read = pytesseract.image_to_string(p1_preprocessed_im, lang = "eng", \
+            config = tess_config)
+        p2_read = pytesseract.image_to_string(p2_preprocessed_im, lang = "eng", \
+            config = tess_config)
+        p3_read = pytesseract.image_to_string(p3_preprocessed_im, lang = "eng", \
+            config = tess_config)
+        p4_read = pytesseract.image_to_string(p4_preprocessed_im, lang = "eng", \
+            config = tess_config)
 
-    if (MODE == "2" or MODE == player):
-        cv2.imshow("win", _inverted_im)  
-        if cv2.waitKey(0) & 0xff == 27:
-            cv2.destroyAllWindows()
+        print("{} - p1 - iteration {}".format(today, iteration))
+        print(p1_read)
+        print("{} - p2 - iteration {}".format(today, iteration))
+        print(p2_read)
+        print("{} - p3 - iteration {}".format(today, iteration))
+        print(p3_read)
+        print("{} - p4 - iteration {}".format(today, iteration))
+        print(p4_read)
 
-    return _inverted_im
+        total = (self._parse_read(p1_read) + self._parse_read(p2_read) + 
+            self._parse_read(p3_read) + self._parse_read(p4_read))
+        # TODO: Consume buy_back_count here to determine players that need to be bought back
+        self._buy_back_count = 0
 
-def parse_read(str):
-    # Remove all whitespace
-    _str = "".join(str.split())
+        print("TOTAL: ")
+        print(total)
+        print()
 
-    if ("$" in str):
-        BUY_BACK_COUNT += 1
-    if (str.isdigit()):
-        return int(str)
-    return 0
+    def _preprocess_image(
+        self, 
+        im, 
+        width, 
+        height, 
+        left_ratio, 
+        top_ratio, 
+        right_ratio, 
+        bottom_ratio, 
+        player):
 
+        RESIZE_FACTOR = 3
+        IMAGE_CONVERSION_MODE = "LA"
 
-def main(display_number, iteration):
-    # Get the rect of the display
-    _display_rect = getDisplayRects()[display_number - 1]
+        # Crop image to bounding boxes
+        crop_left = int(width * left_ratio)
+        crop_top = int(height * top_ratio)
+        crop_right = int(width * right_ratio)
+        crop_bottom = int(height * bottom_ratio)
 
-    _im = getRectAsImage(_display_rect)
-    _width, _height = _im.size
+        cropped_im = im.crop((crop_left, crop_top, crop_right, crop_bottom))
 
-    _today = str(date.today())
+        # Resize
+        larger_size = tuple(RESIZE_FACTOR * x for x in cropped_im.size)
+        cropped_im = cropped_im.resize(larger_size, Image.ANTIALIAS)
 
-    # P1
-    _p1_preprocessed_im = preprocess_image(_im, _width, _height, 0.034, 0.95, 0.08, 0.965, "p1")
-    # P2
-    _p2_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.88, 0.08, 0.895, "p2")
-    # P3
-    _p3_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.818, 0.08, 0.84, "p3")
-    # P4
-    _p4_preprocessed_im = preprocess_image(_im, _width, _height, 0.035, 0.75, 0.08, 0.768, "p4")
+        # Convert to opencv consumable type, in grayscale
+        open_cv_im = cv2.cvtColor(np.array(cropped_im), cv2.COLOR_RGB2GRAY)
 
-    if (MODE == "1"):
-        cv2.imwrite("{}-p1-{}.png".format(_today, iteration), _p1_preprocessed_im)
-        cv2.imwrite("{}-p2-{}.png".format(_today, iteration), _p2_preprocessed_im)
-        cv2.imwrite("{}-p3-{}.png".format(_today, iteration), _p3_preprocessed_im)
-        cv2.imwrite("{}-p4-{}.png".format(_today, iteration), _p4_preprocessed_im)
+        # Apply automatic Otsu thresholding
+        _, thr = cv2.threshold(open_cv_im, 0, 255, cv2.THRESH_OTSU)
 
-    pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
-    _tess_config = "--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$"
+        # Invert image
+        inverted_im = cv2.bitwise_not(thr)
 
-    _p1_read = pytesseract.image_to_string(_p1_preprocessed_im, lang = "eng", \
-        config = _tess_config)
-    _p2_read = pytesseract.image_to_string(_p2_preprocessed_im, lang = "eng", \
-        config = _tess_config)
-    _p3_read = pytesseract.image_to_string(_p3_preprocessed_im, lang = "eng", \
-        config = _tess_config)
-    _p4_read = pytesseract.image_to_string(_p4_preprocessed_im, lang = "eng", \
-        config = _tess_config)
+        if (self._mode == "2" or self._mode == player):
+            cv2.imshow("win", inverted_im)  
+            if cv2.waitKey(0) & 0xff == 27:
+                cv2.destroyAllWindows()
 
-    print("{} - p1 - iteration {}".format(_today, iteration))
-    print(_p1_read)
-    print("{} - p2 - iteration {}".format(_today, iteration))
-    print(_p2_read)
-    print("{} - p3 - iteration {}".format(_today, iteration))
-    print(_p3_read)
-    print("{} - p4 - iteration {}".format(_today, iteration))
-    print(_p4_read)
+        return inverted_im
 
-    total = parse_read(_p1_read) + parse_read(_p2_read) + parse_read(_p3_read) + parse_read(_p4_read)
-    # TODO: Consume BUY_BACK_COUNT here to determine players that need to be bought back
-    BUY_BACK_COUNT = 0
+    def _parse_read(self, str):
+        # Remove all whitespace
+        str = "".join(str.split())
 
-    print("TOTAL: ")
-    print(total)
-    print()
-
-def menu_choice():
-    print("(0) - Only print statements")
-    print("(1) - Write screenshots to file system")
-    print("(2) - Show screenshots in photo viewer")
-    print("(3) - Show screenshots for specific player")
-    print("(4) - One iteration at a time")
-
-    _choice = input("Select mode: ")
-
-    if (_choice == "3"):
-        _player_choice = int(input("Select player number (i.e. 3): "))
-
-        _player_choices = {
-            1: "p1",
-            2: "p2",
-            3: "p3",
-            4: "p4"
-        }
-        return _player_choices.get(_player_choice)
-
-    return _choice
+        if ("$" in str):
+            self._buy_back_count += 1
+        if (str.isdigit()):
+            return int(str)
+        return 0
 
 if __name__ == "__main__": 
     if (len(sys.argv) == 2):
-        _display_number = int(sys.argv[1])
+        display_number = int(sys.argv[1])
     else:
-        _display_number = int(input("Display number that modern warfare is running on (e.g. 2): "))
+        display_number = int(input("Display number that modern warfare is running on (e.g. 2): "))
 
-    MODE = menu_choice()
+    menu.show_menu()
+    mode = menu.get_choice()
+    process = Processor(display_number, mode)
     
     # TODO: Add game-has-started detection, for now just wait 10 seconds until executing
     time.sleep(10)
 
-    _i = 0
+    i = 0
     while (1):
-        _i += 1
-        main(_display_number, _i)
-        if (MODE == "4"):
+        i += 1
+        process.run(i)
+        if (mode == "4"):
             input("Press Enter to continue...")
         time.sleep(10)

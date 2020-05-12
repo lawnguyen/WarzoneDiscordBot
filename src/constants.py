@@ -1,0 +1,3 @@
+# In-game constants
+BUY_BACK_COST = 4500
+LOADOUT_COST = 10000
