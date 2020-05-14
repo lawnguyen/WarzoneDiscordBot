@@ -1,15 +1,9 @@
-import sys
-import time
-from datetime import date
-
 import cv2
 import numpy as np
 import pytesseract
 from desktopmagic.screengrab_win32 import getDisplayRects, getRectAsImage
 from PIL import Image
-
-import constants
-import menu
+from datetime import date
 from cropRatio import CropRatio
 
 class Processor:
