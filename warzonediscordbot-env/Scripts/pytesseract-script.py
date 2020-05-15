@@ -1,4 +1,4 @@
-#!/Users/law/Desktop/WarzoneDiscordBot/warzonediscordbot/bin/python3
+#!c:\users\lawrence\desktop\warzonediscordbot\warzonediscordbot-env\scripts\python.exe
 # EASY-INSTALL-ENTRY-SCRIPT: 'pytesseract==0.3.4','console_scripts','pytesseract'
 __requires__ = 'pytesseract==0.3.4'
 import re

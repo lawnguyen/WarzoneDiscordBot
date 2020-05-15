@@ -1,0 +1,5 @@
+#!c:\users\lawrence\desktop\warzonediscordbot\warzonediscordbot-env\scripts\python.exe
+
+from desktopmagic.scripts.screengrab_torture_test import main
+
+main()
