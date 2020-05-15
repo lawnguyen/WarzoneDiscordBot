@@ -13,7 +13,7 @@ class Processor:
         self._mode = mode
         self._buy_back_count = 0
     
-    def run(self, iteration):
+    def get_cash_total(self, iteration):
         # Get the rect of the display
         display_rect = getDisplayRects()[self._display_number - 1]
 
@@ -70,6 +70,8 @@ class Processor:
         print("TOTAL: ")
         print(total)
         print()
+
+        return total
 
     def _preprocess_image(self, im, width, height, crop_ratio, player):
 
