@@ -1,8 +1,7 @@
 import asyncio
 import time
 import discord
-import math
-import constants
+import messageCreator
 
 class DiscordBot(discord.Client):
 
@@ -31,28 +30,11 @@ class DiscordBot(discord.Client):
 
             cash_total = self._processor.get_cash_total(i)
             buy_back_count = self._processor.buy_back_count
-            message = self._create_message(cash_total, buy_back_count)
+            message = messageCreator.create(cash_total, buy_back_count)
 
             if (message):
                 await main_channel.send(message, tts = True, delete_after = 0)
 
             if (self._mode == "4"):
                 input("Press Enter to continue...")
-            
-    def _create_message(self, cash_total, buy_back_count):
-        if (cash_total == 0):
-            return None
-        
-        message = "Total cash is {}".format(cash_total)
-
-        if (cash_total >= constants.LOADOUT_COST):
-            message += ", you can buy a loadout drop"
-            if (buy_back_count >= 1):
-                message += " or"
-
-        if (buy_back_count >= 1):
-            buy_back_amount = math.floor(cash_total / constants.BUY_BACK_COST)
-            message += ", you can buy back {} of your teammates".format(buy_back_amount)
-
-        return message
     
