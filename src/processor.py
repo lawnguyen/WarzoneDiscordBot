@@ -113,5 +113,8 @@ class Processor:
         if ("$" in str):
             self._buy_back_count += 1
         if (str.isdigit()):
-            return int(str)
+            num = int(str)
+            # Round down to nearest 100 since you can only have multiples of $100
+            # in-game and so anything that's not a multiple of 100 is an OCR error
+            return num - (num % 100)
         return 0
