@@ -27,7 +27,7 @@ class DiscordBot(discord.Client):
             await asyncio.sleep(10)
             i += 1
             cash_total = self.processor.get_cash_total(i)
-            await main_channel.send("Total cash is {}".format(cash_total), tts = True)
+            await main_channel.send("Total cash is {}".format(cash_total), tts = True, delete_after = 0)
 
             if (self.mode == "4"):
                 input("Press Enter to continue...")
