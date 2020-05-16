@@ -14,7 +14,7 @@ def create(cash_total, buy_back_count):
         if (buy_back_count >= 1):
             message += " or"
 
-    if (buy_back_count >= 1):
+    if (buy_back_count >= 1 and cash_total >= constants.BUY_BACK_COST):
         buy_back_amount = math.floor(cash_total / constants.BUY_BACK_COST)
         message += ", you can buy back {} of your teammates".format(buy_back_amount)
 

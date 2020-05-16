@@ -9,11 +9,12 @@ class DiscordBot(discord.Client):
         super().__init__()
         self._processor = processor
         self._mode = mode
+        self._message_frequency = 30    # in seconds
 
     async def on_ready(self):
         print("\nDiscord bot is ready\n")
 
-        # TODO: Add game-has-started detection, for now just wait 10 seconds until executing
+        # TODO: Add game-has-started detection
         await self._main_loop()
 
     async def _main_loop(self):
@@ -25,7 +26,7 @@ class DiscordBot(discord.Client):
         
         i = 0
         while (1):
-            await asyncio.sleep(10)
+            await asyncio.sleep(self._message_frequency)
             i += 1
 
             cash_total = self._processor.get_cash_total(i)
