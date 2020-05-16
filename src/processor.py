@@ -11,7 +11,7 @@ class Processor:
     def __init__(self, display_number, mode):
         self._display_number = display_number
         self._mode = mode
-        self._buy_back_count = 0
+        self.buy_back_count = 0
     
     def get_cash_total(self, iteration):
         # Get the rect of the display
@@ -62,10 +62,11 @@ class Processor:
         print("{} - p4 - iteration {}".format(today, iteration))
         print(p4_read)
 
+        # Reset buy_back_count so we can get a fresh value
+        self.buy_back_count = 0
+        
         total = (self._parse_read(p1_read) + self._parse_read(p2_read) + 
             self._parse_read(p3_read) + self._parse_read(p4_read))
-        # TODO: Consume buy_back_count here to determine players that need to be bought back
-        self._buy_back_count = 0
 
         print("TOTAL: ")
         print(total)
@@ -111,7 +112,7 @@ class Processor:
         str = "".join(str.split())
 
         if ("$" in str):
-            self._buy_back_count += 1
+            self.buy_back_count += 1
         if (str.isdigit()):
             num = int(str)
             # Round down to nearest 100 since you can only have multiples of $100

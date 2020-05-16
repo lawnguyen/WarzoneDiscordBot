@@ -1,13 +1,15 @@
 import asyncio
 import time
 import discord
+import math
+import constants
 
 class DiscordBot(discord.Client):
 
     def __init__(self, processor, mode):
         super().__init__()
-        self.processor = processor
-        self.mode = mode
+        self._processor = processor
+        self._mode = mode
 
     async def on_ready(self):
         print("\nDiscord bot is ready\n")
@@ -26,11 +28,31 @@ class DiscordBot(discord.Client):
         while (1):
             await asyncio.sleep(10)
             i += 1
-            cash_total = self.processor.get_cash_total(i)
-            await main_channel.send("Total cash is {}".format(cash_total), tts = True, delete_after = 0)
 
-            if (self.mode == "4"):
+            cash_total = self._processor.get_cash_total(i)
+            buy_back_count = self._processor.buy_back_count
+            message = self._create_message(cash_total, buy_back_count)
+
+            if (message):
+                await main_channel.send(message, tts = True, delete_after = 0)
+
+            if (self._mode == "4"):
                 input("Press Enter to continue...")
             
+    def _create_message(self, cash_total, buy_back_count):
+        if (cash_total == 0):
+            return None
+        
+        message = "Total cash is {}".format(cash_total)
 
+        if (cash_total >= constants.LOADOUT_COST):
+            message += ", you can buy a loadout drop"
+            if (buy_back_count >= 1):
+                message += " or"
+
+        if (buy_back_count >= 1):
+            buy_back_amount = math.floor(cash_total / constants.BUY_BACK_COST)
+            message += ", you can buy back {} of your teammates".format(buy_back_amount)
+
+        return message
     
