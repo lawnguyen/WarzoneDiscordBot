@@ -9,7 +9,8 @@ class DiscordBot(discord.Client):
         super().__init__()
         self._processor = processor
         self._mode = mode
-        self._message_frequency = 30    # in seconds
+        self._message_frequency = 60    # in seconds
+        self._target_channel = "general"
 
     async def on_ready(self):
         print("\nDiscord bot is ready\n")
@@ -21,7 +22,7 @@ class DiscordBot(discord.Client):
         main_channel = None
         channels = self.get_all_channels()
         for channel in channels:
-            if (channel.name == "general"):
+            if (channel.name == self._target_channel):
                 main_channel = channel
         
         i = 0
