@@ -24,8 +24,15 @@ class Processor:
         # which shows on the screen at the beginning of the match before you drop
         armistice_crop_ratio = CropRatio(0.068, 0.720, 0.198, 0.761)
         preprocessed_im = self._preprocess_image(im, width, height, armistice_crop_ratio, "start")
-        print(pytesseract.image_to_string(preprocessed_im, lang="eng", config="--psm 8 --oem 3"))
+        read = pytesseract.image_to_string(preprocessed_im, lang="eng", config="--psm 8 --oem 3")
 
+        # In this case, we don't really care that we were fully able to detect the 
+        # word "Armistice", we just want to know that the game has started so
+        # return true if we've read at least 4 of the characters successfully
+        intersect = set(read.lower().strip()).intersection(
+            {"a", "r", "m", "i", "s", "t", "i", "c", "e"})
+        if (len(intersect) >= 4):
+            return True
         return False
     
     def get_cash_total(self, iteration):
