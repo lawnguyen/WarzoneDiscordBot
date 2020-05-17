@@ -5,6 +5,7 @@ __all__ = ["start_timer", "get_time_elapsed"]
 _start_time = None
 
 def start_timer():
+    global _start_time
     _start_time = time.time()
 
 def get_time_elapsed():

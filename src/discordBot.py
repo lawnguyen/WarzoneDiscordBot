@@ -2,6 +2,7 @@ import asyncio
 import time
 import discord
 import messageCreator
+import gameTimer
 
 class DiscordBot(discord.Client):
 
@@ -19,9 +20,9 @@ class DiscordBot(discord.Client):
             if (self._processor.is_game_started()):
                 break
         print("Game started\n")
+        gameTimer.start_timer()
         await self._main_loop()
 
-        # TODO: Start a timer at game start and send useful time-based messages
         # TODO: Listen for command to restart when starting a new game
 
     async def _main_loop(self):
@@ -38,7 +39,8 @@ class DiscordBot(discord.Client):
 
             cash_total = self._processor.get_cash_total(i)
             buy_back_count = self._processor.buy_back_count
-            message = messageCreator.create(cash_total, buy_back_count)
+            message = messageCreator.create(
+                cash_total, buy_back_count, gameTimer.get_time_elapsed)
 
             if (message):
                 await main_channel.send(message, tts = True, delete_after = 0)

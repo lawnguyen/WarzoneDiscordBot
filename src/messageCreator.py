@@ -3,7 +3,7 @@ import math
 
 __all__ = ["create"]
 
-def create(cash_total, buy_back_count):
+def create(cash_total, buy_back_count, time_elapsed):
     if (cash_total < 4000):
         # For now, don't send a message unless we have >= $4000 since any
         # lower of a total is not very useful to the entire team
@@ -20,5 +20,7 @@ def create(cash_total, buy_back_count):
         buy_back_amount = math.floor(cash_total / constants.BUY_BACK_COST)
         message += ", you can buy back {} of your teammates".format(
             min(buy_back_amount, buy_back_count))
+
+    # TODO: Created in-game messages based on time_elapsed
 
     return message
