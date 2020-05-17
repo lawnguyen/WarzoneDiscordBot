@@ -21,6 +21,9 @@ class DiscordBot(discord.Client):
         print("Game started\n")
         await self._main_loop()
 
+        # TODO: Start a timer at game start and send useful time-based messages
+        # TODO: Listen for command to restart when starting a new game
+
     async def _main_loop(self):
         main_channel = None
         channels = self.get_all_channels()
