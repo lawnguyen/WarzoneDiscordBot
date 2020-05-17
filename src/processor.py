@@ -7,17 +7,29 @@ from datetime import date
 from cropRatio import CropRatio
 
 class Processor:
+    pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
 
     def __init__(self, display_number, mode):
         self._display_number = display_number
+        self._display_rect = getDisplayRects()[self._display_number - 1]
         self._mode = mode
+
         self.buy_back_count = 0
+
+    def is_game_started(self):
+        im = getRectAsImage(self._display_rect)
+        width, height = im.size
+
+        # Check if game is started by detecting the word "Armistice" on screen
+        # which shows on the screen at the beginning of the match before you drop
+        armistice_crop_ratio = CropRatio(0.068, 0.720, 0.198, 0.761)
+        preprocessed_im = self._preprocess_image(im, width, height, armistice_crop_ratio, "start")
+        print(pytesseract.image_to_string(preprocessed_im, lang="eng", config="--psm 8 --oem 3"))
+
+        return False
     
     def get_cash_total(self, iteration):
-        # Get the rect of the display
-        display_rect = getDisplayRects()[self._display_number - 1]
-
-        im = getRectAsImage(display_rect)
+        im = getRectAsImage(self._display_rect)
         width, height = im.size
 
         today = str(date.today())
@@ -41,7 +53,6 @@ class Processor:
             cv2.imwrite("{}-p3-{}.png".format(today, iteration), p3_preprocessed_im)
             cv2.imwrite("{}-p4-{}.png".format(today, iteration), p4_preprocessed_im)
 
-        pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\Lawrence\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
         tess_config = "--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$"
 
         p1_read = pytesseract.image_to_string(p1_preprocessed_im, lang = "eng", \
@@ -119,3 +130,4 @@ class Processor:
             # in-game and so anything that's not a multiple of 100 is an OCR error
             return num - (num % 100)
         return 0
+
