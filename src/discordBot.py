@@ -15,11 +15,10 @@ class DiscordBot(discord.Client):
     async def on_ready(self):
         print("\nDiscord bot is ready\n")
 
-        # TODO: Add game-has-started detection
         while (1):
             if (self._processor.is_game_started()):
                 break
-        print("game started")
+        print("Game started\n")
         await self._main_loop()
 
     async def _main_loop(self):
