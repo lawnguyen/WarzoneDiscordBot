@@ -26,12 +26,7 @@ class Processor:
         preprocessed_im = self._preprocess_image(im, width, height, armistice_crop_ratio, "start")
         read = pytesseract.image_to_string(preprocessed_im, lang="eng", config="--psm 8 --oem 3")
 
-        # In this case, we don't really care that we were fully able to detect the 
-        # word "Armistice", we just want to know that the game has started so
-        # return true if we've read at least 6 of the characters successfully
-        intersect = set(read.lower().strip()).intersection(
-            {"a", "r", "m", "i", "s", "t", "i", "c", "e"})
-        if (len(intersect) >= 6):
+        if (read.lower().strip() == "armistice"):
             return True
         return False
     

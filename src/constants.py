@@ -2,7 +2,7 @@
 BUY_BACK_COST = 4500
 LOADOUT_COST = 10000
 
-# time constants (in seconds after game start)
+# Time constants (in seconds after game start)
 GAME_START_CUT_SCENE = 22
 
 CIRCLE_1_LENGTH = 220
