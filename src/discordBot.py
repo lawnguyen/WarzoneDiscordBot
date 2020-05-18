@@ -43,7 +43,7 @@ class DiscordBot(discord.Client):
             cash_total = self._processor.get_cash_total(i)
             buy_back_count = self._processor.buy_back_count
             message = messageCreator.create(
-                cash_total, buy_back_count, self._game_timer.get_time_elapsed)
+                cash_total, buy_back_count, self._game_timer.get_time_elapsed())
 
             if (self._should_send_message(message)):
                 self._message_timer.restart_timer()

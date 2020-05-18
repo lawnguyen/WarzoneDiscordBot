@@ -4,9 +4,11 @@ import math
 __all__ = ["create"]
 
 def create(cash_total, buy_back_count, time_elapsed):
-    if (cash_total < 4000):
-        # For now, don't send a message unless we have >= $4000 since any
-        # lower of a total is not very useful to the entire team
+    if (cash_total < constants.BUY_BACK_COST or
+        (cash_total < constants.LOADOUT_COST and buy_back_count == 0)):
+
+        # To avoid sending too many un-useful messages, let's only send a message
+        # if we can afford a loadout or if we need to buy a player back
         return None
     
     message = "Total cash is ${}".format(cash_total)
