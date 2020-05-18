@@ -14,6 +14,7 @@ class DiscordBot(discord.Client):
         self._target_channel = "general"    # TODO: Add target guild
         self._game_timer = Timer()
         self._message_timer = Timer()
+        self.loadout_message_sent = False
 
     async def on_ready(self):
         print("\nDiscord bot is ready\n")
@@ -44,14 +45,21 @@ class DiscordBot(discord.Client):
             message = messageCreator.create(
                 cash_total, buy_back_count, self._game_timer.get_time_elapsed)
 
-            if (message and self._should_send_message()):
+            if (self._should_send_message(message)):
                 self._message_timer.restart_timer()
                 await main_channel.send(message, tts = True, delete_after = 0)
 
+                if ("loadout" in message):
+                    # We realistically only want this message once
+                    self.loadout_message_sent = True
 
             if (self._mode == "4"):
                 input("Press Enter to continue...")
 
-    def _should_send_message(self):
-        if (self._message_timer.get_time_elapsed() < self._message_frequency):
+    def _should_send_message(self, message):
+        if (not message or
+            self.loadout_message_sent == True or
+            self._message_timer.get_time_elapsed() < self._message_frequency):
+
             return False
+        return True
