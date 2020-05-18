@@ -28,10 +28,10 @@ class Processor:
 
         # In this case, we don't really care that we were fully able to detect the 
         # word "Armistice", we just want to know that the game has started so
-        # return true if we've read at least 4 of the characters successfully
+        # return true if we've read at least 6 of the characters successfully
         intersect = set(read.lower().strip()).intersection(
             {"a", "r", "m", "i", "s", "t", "i", "c", "e"})
-        if (len(intersect) >= 4):
+        if (len(intersect) >= 6):
             return True
         return False
     
