@@ -4,7 +4,7 @@ class Timer():
     def __init__(self):
         self._start_time = None
 
-    def start_timer(self):
+    def restart_timer(self):
         self._start_time = time.time()
 
     def get_time_elapsed(self):
