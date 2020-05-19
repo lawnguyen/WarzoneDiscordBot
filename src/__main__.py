@@ -16,4 +16,5 @@ if __name__ == "__main__":
     mode = menu.get_choice()
     processor = Processor(display_number, mode)
     bot_client = DiscordBot(processor, mode)
+    bot_client.loop.create_task(bot_client.main_loop_background_task())
     bot_client.run(config.DISCORD_BOT_TOKEN)

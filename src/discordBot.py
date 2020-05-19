@@ -16,23 +16,19 @@ class DiscordBot(discord.Client):
         self._game_timer = Timer()
         self._message_timer = Timer()
         self.loadout_message_sent = False
-        self.has_started = False
 
-    async def on_ready(self):
-        if (self.has_started == True):
-            # on_ready can be called multiple times during a session
-            return
-
+    async def main_loop_background_task(self):
+        await self.wait_until_ready()
         print("\nDiscord bot is ready\n")
 
-        while (1):
-            if (self._processor.is_game_started()):
-                break
+        # while (1):
+        #     if (self._processor.is_game_started()):
+        #         break
         print("Game started\n")
-        self.has_started = True
         self._game_timer.restart_timer()
         self._message_timer.restart_timer()
         await self._main_loop()
+
 
     async def _main_loop(self):
         main_channel = None
@@ -57,7 +53,8 @@ class DiscordBot(discord.Client):
 
             if (self._should_send_message(message)):
                 self._message_timer.restart_timer()
-                await main_channel.send(message, tts = True, delete_after = 0)
+                message_sent = await main_channel.send(message, tts = True)
+                await message_sent.delete()
 
                 if ("loadout" in message):
                     # We realistically only want this message once

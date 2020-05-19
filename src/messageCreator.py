@@ -35,7 +35,7 @@ def create(cash_total, buy_back_count, time_elapsed):
     return message
 
 checkpoints_messages_map = {
-    constants.GAME_START_CUT_SCENE: "game is starting",
+    constants.GAME_START_CUT_SCENE: "match is starting",
     constants.CIRCLE_1_END: "gas is coming in",
     constants.CIRCLE_2_END: "gas is coming in",
     constants.CIRCLE_3_END: "gas is coming in",
