@@ -1,5 +1,4 @@
 import asyncio
-import time
 import discord
 import messageCreator
 from timer import Timer
@@ -10,36 +9,30 @@ class DiscordBot(discord.Client):
         super().__init__()
         self._processor = processor
         self._mode = mode
+        
         self._message_frequency = 20    # in seconds
         self._target_guild = "law bot testing"
         self._target_channel = "general"
+        self.loadout_message_sent = False
+
         self._game_timer = Timer()
         self._message_timer = Timer()
-        self.loadout_message_sent = False
 
     async def main_loop_background_task(self):
         await self.wait_until_ready()
+        self._init_discord_server_details()
         print("\nDiscord bot is ready\n")
 
-        # while (1):
-        #     if (self._processor.is_game_started()):
-        #         break
-        print("Game started\n")
+        while (1):
+            if (self._processor.is_game_started()):
+                break
+
+        print("Match started\n")
         self._game_timer.restart_timer()
         self._message_timer.restart_timer()
         await self._main_loop()
 
-
     async def _main_loop(self):
-        main_channel = None
-        main_guild = None
-        for guild in self.guilds:
-            if (guild.name == self._target_guild):
-                main_guild = guild
-        for channel in main_guild.channels:
-            if (channel.name == self._target_channel):
-                main_channel = channel
-        
         i = 0
         while (1):
             i += 1
@@ -53,7 +46,7 @@ class DiscordBot(discord.Client):
 
             if (self._should_send_message(message)):
                 self._message_timer.restart_timer()
-                message_sent = await main_channel.send(message, tts = True)
+                message_sent = await self._main_channel.send(message, tts = True)
                 await message_sent.delete()
 
                 if ("loadout" in message):
@@ -62,6 +55,17 @@ class DiscordBot(discord.Client):
 
             if (self._mode == "4"):
                 input("Press Enter to continue...")
+
+    def _init_discord_server_details(self):
+        self._main_channel = None
+        self._main_guild = None
+        
+        for guild in self.guilds:
+            if (guild.name == self._target_guild):
+                self._main_guild = guild
+        for channel in self._main_guild.channels:
+            if (channel.name == self._target_channel):
+                self._main_channel = channel
 
     def _should_send_message(self, message):
         if (not message or

@@ -66,6 +66,12 @@ class Processor:
         p4_read = pytesseract.image_to_string(p4_preprocessed_im, lang = "eng", \
             config = tess_config)
 
+        # Reset buy_back_count so we can get a fresh value
+        self.buy_back_count = 0
+        
+        total = (self._parse_read(p1_read) + self._parse_read(p2_read) + 
+            self._parse_read(p3_read) + self._parse_read(p4_read))
+
         print("{} - p1 - iteration {}".format(today, iteration))
         print(p1_read)
         print("{} - p2 - iteration {}".format(today, iteration))
@@ -74,16 +80,7 @@ class Processor:
         print(p3_read)
         print("{} - p4 - iteration {}".format(today, iteration))
         print(p4_read)
-
-        # Reset buy_back_count so we can get a fresh value
-        self.buy_back_count = 0
-        
-        total = (self._parse_read(p1_read) + self._parse_read(p2_read) + 
-            self._parse_read(p3_read) + self._parse_read(p4_read))
-
-        print("TOTAL: ")
-        print(total)
-        print()
+        print("TOTAL: {}\n".format(total))
 
         return total
 

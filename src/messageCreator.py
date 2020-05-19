@@ -3,6 +3,19 @@ import math
 
 __all__ = ["create"]
 
+checkpoint_message_map = {
+    constants.GAME_START_CUT_SCENE: "match is starting",
+    constants.CIRCLE_1_END: "gas is coming in",
+    constants.CIRCLE_2_END: "gas is coming in",
+    constants.CIRCLE_3_END: "gas is coming in",
+    constants.CIRCLE_4_END: "gas is coming in",
+    constants.CIRCLE_5_END: "gas is coming in",
+    constants.LOADOUT_DROP_1: "loadout drop coming in",
+    constants.LOADOUT_DROP_2: "loadout drop coming in"
+}
+
+checkpoints = list(checkpoint_message_map.keys())
+
 def create(cash_total, buy_back_count, time_elapsed):
     time_elapsed = int(time_elapsed)
 
@@ -30,19 +43,6 @@ def create(cash_total, buy_back_count, time_elapsed):
             min(buy_back_amount, buy_back_count))
 
     if (time_elapsed in checkpoints):
-        message = checkpoints_messages_map[time_elapsed]
+        message = checkpoint_message_map[time_elapsed]
 
     return message
-
-checkpoints_messages_map = {
-    constants.GAME_START_CUT_SCENE: "match is starting",
-    constants.CIRCLE_1_END: "gas is coming in",
-    constants.CIRCLE_2_END: "gas is coming in",
-    constants.CIRCLE_3_END: "gas is coming in",
-    constants.CIRCLE_4_END: "gas is coming in",
-    constants.CIRCLE_5_END: "gas is coming in",
-    constants.LOADOUT_DROP_1: "loadout drop coming in",
-    constants.LOADOUT_DROP_2: "loadout drop coming in"
-}
-
-checkpoints = list(checkpoints_messages_map.keys())
