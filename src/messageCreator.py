@@ -18,6 +18,7 @@ checkpoints = list(checkpoint_message_map.keys())
 
 def create(cash_total, buy_back_count, time_elapsed):
     time_elapsed = int(time_elapsed)
+    # print(time_elapsed)
 
     if (time_elapsed not in checkpoints and
         (cash_total < constants.BUY_BACK_COST or 
@@ -42,7 +43,7 @@ def create(cash_total, buy_back_count, time_elapsed):
         message += ", you can buy back {} of your teammates".format(
             min(buy_back_amount, buy_back_count))
 
-    if (time_elapsed in checkpoints):
+    if (time_elapsed in checkpoints): # [22, 242, 602, 897, 1127, 1297, 498, 1253]
         message = checkpoint_message_map[time_elapsed]
 
     return message
