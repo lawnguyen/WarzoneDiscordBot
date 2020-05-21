@@ -43,7 +43,12 @@ def create(cash_total, buy_back_count, time_elapsed):
     
     message = "Total cash is ${}".format(cash_total)
 
-    if (cash_total >= constants.LOADOUT_COST):
+    if (cash_total >= constants.LOADOUT_COST and 
+        cash_total <= constants.LOADOUT_COST * 2):
+
+        # Send a message if they can afford a loadout drop but don't send a 
+        # message if they have double the amount needed because it is obvious
+        # at that point and we want to reduce the number of disruptive messages
         message += ", you can buy a loadout drop"
         if (buy_back_count >= 1):
             message += " or"
