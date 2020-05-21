@@ -72,7 +72,7 @@ class Processor:
         total = (self._parse_read(p1_read) + self._parse_read(p2_read) + 
             self._parse_read(p3_read) + self._parse_read(p4_read))
 
-        if (self._mode == 0):
+        if (self._mode == "0"):
             print("{} - p1 - iteration {}".format(today, iteration))
             print(p1_read)
             print("{} - p2 - iteration {}".format(today, iteration))
