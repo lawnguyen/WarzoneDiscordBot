@@ -6,6 +6,7 @@ def show_menu():
     print("(2) - Show screenshots in photo viewer")
     print("(3) - Show screenshots for specific player")
     print("(4) - One iteration at a time")
+    print("(5) - No print statements")
 
 def get_choice():
     choice = input("Select mode: ")
