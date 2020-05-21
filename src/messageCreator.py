@@ -3,7 +3,7 @@ import math
 
 __all__ = ["create"]
 
-checkpoint_message_map = {
+_checkpoint_message_map = {
     constants.GAME_START_CUT_SCENE: "match is starting",
     constants.CIRCLE_1_END: "gas is coming in",
     constants.CIRCLE_2_END: "gas is coming in",
@@ -14,13 +14,23 @@ checkpoint_message_map = {
     constants.LOADOUT_DROP_2: "loadout drop coming in"
 }
 
-checkpoints = list(checkpoint_message_map.keys())
+# Since we're working with real wall-clock time to determine in-game checkpoints,
+# we can't assume that our code executes every second. To account for the occasional
+# miss, let's include the checkpoint time +/- one second.
+_map_copy = _checkpoint_message_map.copy()
+for key, value in _checkpoint_message_map.items():
+    _map_copy[key + 1] = value
+    _map_copy[key] = value
+    _map_copy[key - 1] = value
+_checkpoint_message_map.clear()
+_checkpoint_message_map = _map_copy
+
+_checkpoints = list(_checkpoint_message_map.keys())
 
 def create(cash_total, buy_back_count, time_elapsed):
     time_elapsed = int(time_elapsed)
-    # print(time_elapsed)
 
-    if (time_elapsed not in checkpoints and
+    if (time_elapsed not in _checkpoints and
         (cash_total < constants.BUY_BACK_COST or 
             (cash_total < constants.LOADOUT_COST and buy_back_count == 0))):
 
@@ -43,7 +53,7 @@ def create(cash_total, buy_back_count, time_elapsed):
         message += ", you can buy back {} of your teammates".format(
             min(buy_back_amount, buy_back_count))
 
-    if (time_elapsed in checkpoints): # [22, 242, 602, 897, 1127, 1297, 498, 1253]
-        message = checkpoint_message_map[time_elapsed]
+    if (time_elapsed in _checkpoints):
+        message = _checkpoint_message_map[time_elapsed]
 
     return message

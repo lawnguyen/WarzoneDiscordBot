@@ -10,7 +10,7 @@ class DiscordBot(discord.Client):
         self._processor = processor
         self._mode = mode
         
-        self._message_frequency = 20    # in seconds
+        self._message_frequency = 30    # in seconds
         self._target_guild = "law bot testing"
         self._target_channel = "general"
         self.loadout_message_sent = False
@@ -49,7 +49,7 @@ class DiscordBot(discord.Client):
                 message_sent = await self._main_channel.send(message, tts = True)
                 await message_sent.delete()
 
-                if ("loadout" in message):
+                if ("buy a loadout" in message):
                     # We realistically only want this message once
                     self.loadout_message_sent = True
 
@@ -68,9 +68,10 @@ class DiscordBot(discord.Client):
                 self._main_channel = channel
 
     def _should_send_message(self, message):
+        time_elapsed = self._message_timer.get_time_elapsed()
         if (not message or
-            self._message_timer.get_time_elapsed() < self._message_frequency or
-            (self.loadout_message_sent == True and "loadout" in message)):
+            time_elapsed < self._message_frequency or
+            (self.loadout_message_sent == True and "buy a loadout" in message)):
 
             return False
         return True
