@@ -24,7 +24,7 @@ class DiscordBot(discord.Client):
         print("\nDiscord bot is ready\n")
 
         while (1):
-            if (self._processor.is_game_started()):
+            if (self._mode == "6" or self._processor.is_game_started()):
                 break
 
         print("Match started\n")
