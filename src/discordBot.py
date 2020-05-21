@@ -37,7 +37,7 @@ class DiscordBot(discord.Client):
         while (1):
             i += 1
 
-            cash_total = self._processor.get_cash_total(i)
+            cash_total = self._processor.get_cash_total(i, 5)
             buy_back_count = self._processor.buy_back_count
             message = messageCreator.create(
                 cash_total, 
