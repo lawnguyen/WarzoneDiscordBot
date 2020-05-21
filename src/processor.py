@@ -37,6 +37,10 @@ class Processor:
             "p3": {},
             "p4": {}
         }
+
+        # Reset buy_back_count so we can get a fresh value every time
+        self.buy_back_count = 0
+
         while (process_count > 0):
             im = getRectAsImage(self._display_rect)
             width, height = im.size
@@ -101,14 +105,11 @@ class Processor:
             self._parse_read(max(result_counter["p4"], key=result_counter["p4"].get))
         )
 
-        # Reset buy_back_count so we can get a fresh value
-        self.buy_back_count = 0
-
         if (self._mode != 5):
             print("TOTAL: {}\n".format(total))
             # for k in result_counter:
             #         print(result_counter[k])
-            
+
         return total
 
     def _increment_result_counter(self, result_counter, player, result):
