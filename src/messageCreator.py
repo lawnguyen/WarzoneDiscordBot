@@ -1,5 +1,6 @@
 import constants
 import math
+from message import Message
 
 __all__ = ["create"]
 
@@ -39,7 +40,7 @@ def create(cash_total, buy_back_count, time_elapsed):
         # 1. afford a loadout
         # 2. we need to buy a player back
         # 3. time has elapsed onto a checkpoint
-        return None
+        return Message(None, None)
     
     message = "Total cash is ${}".format(cash_total)
 
@@ -57,8 +58,13 @@ def create(cash_total, buy_back_count, time_elapsed):
         buy_back_amount = math.floor(cash_total / constants.BUY_BACK_COST)
         message += ", you can buy back {} of your teammates".format(
             min(buy_back_amount, buy_back_count))
+    
+    messageObject = Message(message, "loadout_cash_prompt") \
+        if "loadout" in message \
+        else Message(message, "cash_prompt")
 
     if (time_elapsed in _checkpoints):
         message = _checkpoint_message_map[time_elapsed]
+        messageObject = Message(message, "checkpoint")
 
-    return message
+    return messageObject

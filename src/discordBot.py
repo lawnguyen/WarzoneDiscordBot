@@ -46,10 +46,11 @@ class DiscordBot(discord.Client):
 
             if (self._should_send_message(message)):
                 self._message_timer.restart_timer()
-                message_sent = await self._main_channel.send(message, tts = True)
+                message_sent = await self._main_channel.send(
+                    message.content, tts = True)
                 await message_sent.delete()
 
-                if ("buy a loadout" in message):
+                if (message.messageType == "loadout_cash_prompt"):
                     # We realistically only want this message once
                     self.loadout_message_sent = True
 
@@ -69,9 +70,16 @@ class DiscordBot(discord.Client):
 
     def _should_send_message(self, message):
         time_elapsed = self._message_timer.get_time_elapsed()
-        if (not message or
+
+        if (message.messageType == "checkpoint"):
+            # always send checkpoint messages, regardless of frequency because 
+            # are time-based and very useful
+            return True
+        
+        if (message.messageType == "none" or
             time_elapsed < self._message_frequency or
-            (self.loadout_message_sent == True and "buy a loadout" in message)):
+            (self.loadout_message_sent == True and 
+                message.messageType == "loadout_cash_prompt")):
 
             return False
         return True
