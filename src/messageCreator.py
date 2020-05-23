@@ -4,6 +4,8 @@ from message import Message
 
 __all__ = ["create"]
 
+_heads_up_time = 30 # in seconds
+
 _checkpoint_message_map = {
     constants.GAME_START_CUT_SCENE: "match is starting",
     constants.CIRCLE_1_END: "gas is coming in",
@@ -11,8 +13,8 @@ _checkpoint_message_map = {
     constants.CIRCLE_3_END: "gas is coming in",
     constants.CIRCLE_4_END: "gas is coming in",
     constants.CIRCLE_5_END: "gas is coming in",
-    constants.LOADOUT_DROP_1: "loadout drop coming in",
-    constants.LOADOUT_DROP_2: "loadout drop coming in"
+    constants.LOADOUT_DROP_1 - _heads_up_time: "loadout drop coming in {} seconds".format(_heads_up_time),
+    constants.LOADOUT_DROP_2 - _heads_up_time: "loadout drop coming in {} seconds".format(_heads_up_time)
 }
 
 # Since we're working with real wall-clock time to determine in-game checkpoints,
