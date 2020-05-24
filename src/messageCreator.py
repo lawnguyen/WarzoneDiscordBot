@@ -60,10 +60,14 @@ def create(cash_total, buy_back_count, time_elapsed):
         buy_back_amount = math.floor(cash_total / constants.BUY_BACK_COST)
         message += ", you can buy back {} of your teammates".format(
             min(buy_back_amount, buy_back_count))
+        messageObject = Message(message, "cash_prompt")
     
-    messageObject = Message(message, "loadout_cash_prompt") \
-        if "loadout" in message \
-        else Message(message, "cash_prompt")
+    if "loadout" in message:
+        messageObject = Message(message, "loadout_cash_prompt")
+    elif "buy back" in message:
+        messageObject = Message(message, "cash_prompt")
+    else:
+        messageObject = Message(None, "none")
 
     if (time_elapsed in _checkpoints):
         message = _checkpoint_message_map[time_elapsed]
