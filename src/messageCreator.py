@@ -4,17 +4,23 @@ from message import Message
 
 __all__ = ["create"]
 
-_heads_up_time = 30 # in seconds
+_heads_up_time_loadout = 30 # in seconds
+_heads_up_time_gas = 10 # in seconds
 
 _checkpoint_message_map = {
     constants.GAME_START_CUT_SCENE: "match is starting",
-    constants.CIRCLE_1_END: "gas is coming in",
-    constants.CIRCLE_2_END: "gas is coming in",
-    constants.CIRCLE_3_END: "gas is coming in",
-    constants.CIRCLE_4_END: "gas is coming in",
-    constants.CIRCLE_5_END: "gas is coming in",
-    constants.LOADOUT_DROP_1 - _heads_up_time: "loadout drop coming in {} seconds".format(_heads_up_time),
-    constants.LOADOUT_DROP_2 - _heads_up_time: "loadout drop coming in {} seconds".format(_heads_up_time)
+    constants.CIRCLE_1_END - _heads_up_time_gas: "gas is coming in {}".format(_heads_up_time_gas),
+    constants.CIRCLE_2_END - _heads_up_time_gas: "gas is coming in {}".format(_heads_up_time_gas),
+    constants.CIRCLE_3_END - _heads_up_time_gas: "gas is coming in {}".format(_heads_up_time_gas),
+    constants.CIRCLE_4_END - _heads_up_time_gas: "gas is coming in {}".format(_heads_up_time_gas),
+    constants.CIRCLE_5_END - _heads_up_time_gas: "gas is coming in {}".format(_heads_up_time_gas),
+    constants.CIRCLE_1_END + int(constants.CIRCLE_1_MOVING / 2): "gas is halfway in",
+    constants.CIRCLE_2_END + int(constants.CIRCLE_2_MOVING / 2): "gas is halfway in",
+    constants.CIRCLE_3_END + int(constants.CIRCLE_3_MOVING / 2): "gas is halfway in",
+    constants.CIRCLE_4_END + int(constants.CIRCLE_4_MOVING / 2): "gas is halfway in",
+    constants.CIRCLE_5_END + int(constants.CIRCLE_5_MOVING / 2): "gas is halfway in",
+    constants.LOADOUT_DROP_1 - _heads_up_time_loadout: "loadout drop coming in {} seconds".format(_heads_up_time_loadout),
+    constants.LOADOUT_DROP_2 - _heads_up_time_loadout: "loadout drop coming in {} seconds".format(_heads_up_time_loadout)
 }
 
 # Since we're working with real wall-clock time to determine in-game checkpoints,
