@@ -11,8 +11,8 @@ class DiscordBot(discord.Client):
         self._mode = mode
         
         self._message_frequency = 30    # in seconds
-        self._target_guild = "law bot testing"
-        self._target_channel = "general"
+        self._target_guild = input("Discord guild: ")
+        self._target_channel = input("Discord channel: ")
         self.loadout_message_sent = False
 
         self._game_timer = Timer()
