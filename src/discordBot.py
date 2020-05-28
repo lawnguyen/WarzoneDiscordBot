@@ -49,7 +49,7 @@ class DiscordBot(discord.Client):
                 self._message_timer.restart_timer()
                 message_sent = await self._main_text_channel.send(
                     message.content, tts = True)
-                #await message_sent.delete()
+                await message_sent.delete()
 
                 if (message.messageType == "loadout_cash_prompt"):
                     # We realistically only want this message once
