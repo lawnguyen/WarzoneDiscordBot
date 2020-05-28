@@ -12,7 +12,8 @@ class DiscordBot(discord.Client):
         
         self._message_frequency = 30    # in seconds
         self._target_guild = input("Discord guild: ")
-        self._target_channel = input("Discord channel: ")
+        self._target_text_channel = input("Discord text channel (case sensitive): ")
+        self._target_voice_channel = input("Discord voice channel (case sensitive): ")
         self.loadout_message_sent = False
 
         self._game_timer = Timer()
@@ -20,7 +21,7 @@ class DiscordBot(discord.Client):
 
     async def main_loop_background_task(self):
         await self.wait_until_ready()
-        self._init_discord_server_details()
+        await self._init_discord_server_details()
         print("\nDiscord bot is ready\n")
 
         while (1):
@@ -46,9 +47,9 @@ class DiscordBot(discord.Client):
 
             if (self._should_send_message(message)):
                 self._message_timer.restart_timer()
-                message_sent = await self._main_channel.send(
+                message_sent = await self._main_text_channel.send(
                     message.content, tts = True)
-                await message_sent.delete()
+                #await message_sent.delete()
 
                 if (message.messageType == "loadout_cash_prompt"):
                     # We realistically only want this message once
@@ -57,16 +58,21 @@ class DiscordBot(discord.Client):
             if (self._mode == "4"):
                 input("Press Enter to continue...")
 
-    def _init_discord_server_details(self):
-        self._main_channel = None
+    async def _init_discord_server_details(self):
+        self._main_text_channel = None
+        self._main_voice_channel = None
         self._main_guild = None
         
         for guild in self.guilds:
             if (guild.name == self._target_guild):
                 self._main_guild = guild
         for channel in self._main_guild.channels:
-            if (channel.name == self._target_channel):
-                self._main_channel = channel
+            if (channel.name == self._target_text_channel):
+                self._main_text_channel = channel
+            elif (channel.name == self._target_voice_channel):
+                self._main_voice_channel = channel
+                await channel.connect()
+
 
     def _should_send_message(self, message):
         time_elapsed = self._message_timer.get_time_elapsed()
