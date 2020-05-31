@@ -78,6 +78,8 @@ class DiscordBot(discord.Client):
         time_elapsed = self._message_timer.get_time_elapsed()
 
         if (message.messageType == "checkpoint"):
+            if (self._mode == "6"):
+                return False
             # always send checkpoint messages, regardless of frequency because 
             # are time-based and very useful
             return True
