@@ -7,7 +7,7 @@ def show_menu():
     print("(3) - Show screenshots for specific player")
     print("(4) - One iteration at a time")
     print("(5) - No print statements")
-    print("(6) - Don't wait for game start (cash prompts only")
+    print("(6) - Don't wait for game start (cash prompts only)")
 
 def get_choice():
     choice = input("Select mode: ")
