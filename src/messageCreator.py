@@ -23,17 +23,6 @@ _checkpoint_message_map = {
     constants.LOADOUT_DROP_2 - _heads_up_time_loadout: "loadout drop coming in {} seconds".format(_heads_up_time_loadout)
 }
 
-# Since we're working with real wall-clock time to determine in-game checkpoints,
-# we can't assume that our code executes every second. To account for the occasional
-# miss, let's include the checkpoint time +/- one second.
-_map_copy = _checkpoint_message_map.copy()
-for key, value in _checkpoint_message_map.items():
-    _map_copy[key + 1] = value
-    _map_copy[key] = value
-    _map_copy[key - 1] = value
-_checkpoint_message_map.clear()
-_checkpoint_message_map = _map_copy
-
 _checkpoints = list(_checkpoint_message_map.keys())
 
 def create(cash_total, buy_back_count, time_elapsed):

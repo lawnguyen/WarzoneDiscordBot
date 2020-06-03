@@ -31,6 +31,8 @@ class Processor:
         return False
     
     def get_cash_total(self, iteration, process_count):
+        # TODO: expose the result counter and remove process_count because it was
+        # blocking the bot heartbeart causing disconnection from discord
         result_counter = {
             "p1": {},
             "p2": {},
