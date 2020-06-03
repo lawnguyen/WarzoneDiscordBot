@@ -92,7 +92,7 @@ class DiscordBot(discord.Client):
             if (self._mode == "6"):
                 return False
             # always send checkpoint messages, regardless of frequency because 
-            # are time-based and very useful
+            # these are time-based and very useful
             return True
         
         if (message.messageType == "none" or
