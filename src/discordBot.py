@@ -67,8 +67,19 @@ class DiscordBot(discord.Client):
             if (guild.name == self._target_guild):
                 self._main_guild = guild
         for channel in self._main_guild.channels:
-            if (channel.name == self._target_text_channel):
+            if (self._main_text_channel and self._main_voice_channel):
+                break
+
+            if (not self._target_text_channel and channel.type.name == "text"):
+                # Default to first channel
                 self._main_text_channel = channel
+            elif (channel.name == self._target_text_channel):
+                self._main_text_channel = channel
+
+            if (not self._target_voice_channel and channel.type.name == "voice"):
+                # Default to first channel
+                self._main_voice_channel = channel
+                await channel.connect()
             elif (channel.name == self._target_voice_channel):
                 self._main_voice_channel = channel
                 await channel.connect()
