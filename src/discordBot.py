@@ -80,11 +80,10 @@ class DiscordBot(discord.Client):
 
             if (not self._target_voice_channel and channel.type.name == "voice"):
                 # Default to first channel
-                self._main_voice_channel = channel
-                await channel.connect()
+                self._main_voice_channel = await channel.connect()
+                self._main_voice_channel.play(discord.FFmpegPCMAudio("../audio/synthesize.mp3"), after=lambda e: print("Voice message sent"))
             elif (channel.name == self._target_voice_channel):
-                self._main_voice_channel = channel
-                await channel.connect()
+                self._main_voice_channel = await channel.connect()
 
 
     def _should_send_message(self, message):
