@@ -42,25 +42,29 @@ class DiscordBot(discord.Client):
         self._iteration += 1
 
         cash_total = self._processor.get_cash_total(self._iteration)
-        if (cash_total):
-            buy_back_count = self._processor.buy_back_count
-            message = messageCreator.create(
-                cash_total,
-                buy_back_count,
-                self._game_timer.get_time_elapsed())
+        buy_back_count = self._processor.buy_back_count
+        message = messageCreator.create(
+            cash_total,
+            buy_back_count,
+            self._game_timer.get_time_elapsed())
 
-            if (self._should_send_message(message)):
-                self._message_timer.restart_timer()
-                message_sent = await self._main_text_channel.send(
-                    message.content, tts = True)
-                await message_sent.delete()
+        if (self._should_send_message(message)):
+            self._message_timer.restart_timer()
+            message_sent = await self._main_text_channel.send(
+                message.content, tts = True)
+            await message_sent.delete()
 
-                if (message.messageType == "loadout_cash_prompt"):
-                    # We realistically only want this message once
-                    self.loadout_message_sent = True
+            if (not self._main_voice_channel.is_playing()):
+                self._main_voice_channel.play(
+                    discord.FFmpegPCMAudio(message.audio), 
+                    after=lambda e: print("Voice message sent"))
 
-            if (self._mode == "4"):
-                input("Press Enter to continue...")
+            if (message.messageType == "loadout_cash_prompt"):
+                # We realistically only want this message once
+                self.loadout_message_sent = True
+
+        if (self._mode == "4"):
+            input("Press Enter to continue...")
 
     async def _init_discord_server_details(self):
         self._main_text_channel = None
@@ -83,7 +87,6 @@ class DiscordBot(discord.Client):
             if (not self._target_voice_channel and channel.type.name == "voice"):
                 # Default to first channel
                 self._main_voice_channel = await channel.connect()
-                self._main_voice_channel.play(discord.FFmpegPCMAudio("../audio/synthesize.mp3"), after=lambda e: print("Voice message sent"))
             elif (channel.name == self._target_voice_channel):
                 self._main_voice_channel = await channel.connect()
 
@@ -91,11 +94,14 @@ class DiscordBot(discord.Client):
     def _should_send_message(self, message):
         time_elapsed = self._message_timer.get_time_elapsed()
 
-        if (message.messageType == "checkpoint"):
+        if (message.messageType == "checkpoint" or 
+            message.messageType == "loadout_cash_prompt"):
+
             if (self._mode == "6"):
                 return False
             # Always send checkpoint messages, regardless of frequency because 
-            # these are time-based and very useful
+            # these are time-based and very useful. Always send loadout_cash_prompt
+            # messages because these are only sent once anyway
             return True
         
         if (message.messageType == "none" or
