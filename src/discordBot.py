@@ -94,13 +94,18 @@ class DiscordBot(discord.Client):
     def _should_send_message(self, message):
         time_elapsed = self._message_timer.get_time_elapsed()
 
-        if (message.messageType == "checkpoint" or 
-            message.messageType == "loadout_cash_prompt"):
-
+        if (message.messageType == "checkpoint"):
+            if (time_elapsed < 3):
+                # Account for the time buffer of +/- one second
+                return False
             if (self._mode == "6"):
                 return False
-            # Always send checkpoint messages, regardless of frequency because 
-            # these are time-based and very useful. Always send loadout_cash_prompt
+            # But otherwise always send checkpoint messages, regardless of 
+            # frequency because these are time-based and very useful
+            return True
+
+        if (message.messageType == "loadout_cash_prompt"):
+            # Always send loadout_cash_prompt
             # messages because these are only sent once anyway
             return True
         
