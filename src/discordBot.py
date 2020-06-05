@@ -27,7 +27,7 @@ class DiscordBot(discord.Client):
         while (1):
             if (self._mode == "6" or self._processor.is_game_started()):
                 break
-            await asyncio.sleep(1)
+            # TODO: make sure this loop doesn't block the bot's heartbeat
 
         print("Match started\n")
         self._game_timer.restart_timer()
