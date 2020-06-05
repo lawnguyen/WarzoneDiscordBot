@@ -4,6 +4,15 @@ from message import Message
 
 __all__ = ["create"]
 
+def _add_time_buffer(checkpoint_map):
+    map_copy = {}	
+    for key, value in checkpoint_map.items():	
+        map_copy[key + 1] = value	
+        map_copy[key] = value	
+        map_copy[key - 1] = value	
+    checkpoint_map.clear()	
+    return map_copy
+
 _heads_up_time_loadout = 30 # in seconds
 _heads_up_time_gas = 10 # in seconds
 _path_to_audio_files = "./audio/"
@@ -25,7 +34,7 @@ _checkpoint_message_map = {
 }
 
 _checkpoint_audio_path_map = {
-constants.GAME_START_CUT_SCENE: _path_to_audio_files + "match_start.mp3",
+    constants.GAME_START_CUT_SCENE: _path_to_audio_files + "match_start.mp3",
     constants.CIRCLE_1_END - _heads_up_time_gas: _path_to_audio_files + "gas_is_coming_in_10.mp3",
     constants.CIRCLE_2_END - _heads_up_time_gas: _path_to_audio_files + "gas_is_coming_in_10.mp3",
     constants.CIRCLE_3_END - _heads_up_time_gas: _path_to_audio_files + "gas_is_coming_in_10.mp3",
@@ -42,22 +51,9 @@ constants.GAME_START_CUT_SCENE: _path_to_audio_files + "match_start.mp3",
 
 # Since we're working with real wall-clock time to determine in-game checkpoints,	
 # we can't assume that our code executes every second. To account for the occasional	
-# miss, let's include the checkpoint time +/- one second.	
-_map_copy = _checkpoint_message_map.copy()	
-for key, value in _checkpoint_message_map.items():	
-    _map_copy[key + 1] = value	
-    _map_copy[key] = value	
-    _map_copy[key - 1] = value	
-_checkpoint_message_map.clear()	
-_checkpoint_message_map = _map_copy
-
-_map_copy = _checkpoint_audio_path_map.copy()	
-for key, value in _checkpoint_audio_path_map.items():	
-    _map_copy[key + 1] = value	
-    _map_copy[key] = value	
-    _map_copy[key - 1] = value	
-_checkpoint_audio_path_map.clear()	
-_checkpoint_audio_path_map = _map_copy
+# miss, let's include the checkpoint time +/- one second.		
+_checkpoint_message_map = _add_time_buffer( _checkpoint_message_map.copy())		
+_checkpoint_audio_path_map = _add_time_buffer(_checkpoint_audio_path_map.copy())
 
 _checkpoints = list(_checkpoint_message_map.keys())
 
