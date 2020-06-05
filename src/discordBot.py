@@ -110,14 +110,15 @@ class DiscordBot(discord.Client):
             return True
 
         if (message.messageType == "loadout_cash_prompt" and 
-            self.loadout_message_sent == False):
+            self.loadout_message_sent == True):
+
+            return False
+        
+        if ((message.messageType == "none" or
+            time_elapsed < self._message_frequency) and
+            message.messageType != "loadout_cash_prompt"):
 
             # Always send loadout_cash_prompt messages regardless of frequency
             # because these are only sent once anyway
-            return True
-        
-        if (message.messageType == "none" or
-            time_elapsed < self._message_frequency):
-
             return False
         return True
