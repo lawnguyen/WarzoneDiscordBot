@@ -1,6 +1,7 @@
 import asyncio
 import discord
 import messageCreator
+import botConfig
 from timer import Timer
 
 class DiscordBot(discord.Client):
@@ -50,11 +51,15 @@ class DiscordBot(discord.Client):
 
         if (self._should_send_message(message)):
             self._message_timer.restart_timer()
-            message_sent = await self._main_text_channel.send(
-                message.content, tts = True)
-            await message_sent.delete()
 
-            if (not self._main_voice_channel.is_playing()):
+            if (botConfig.COMM_MODE == "tts"):
+                message_sent = await self._main_text_channel.send(
+                    message.content, tts = True)
+                await message_sent.delete()
+
+            if (not self._main_voice_channel.is_playing() and 
+                botConfig.COMM_MODE == "voice"):
+                
                 self._main_voice_channel.play(
                     discord.FFmpegPCMAudio(message.audio), 
                     after=lambda e: print("Voice message sent"))

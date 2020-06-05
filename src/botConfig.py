@@ -1,0 +1,1 @@
+COMM_MODE = "voice" # voice or tts
