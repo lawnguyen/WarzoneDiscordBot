@@ -108,8 +108,8 @@ class Processor:
 
             if (self._mode != 5):
                 print("TOTAL: {}\n".format(total))
-                for k in self._result_counter:
-                        print(self._result_counter[k])
+                # for k in self._result_counter:
+                #         print(self._result_counter[k])
 
             return total
 
@@ -122,12 +122,10 @@ class Processor:
             result_counter[player][result] = 1
 
     def _reset_result_counter(self):
-        self._result_counter = {
-            "p1": {},
-            "p2": {},
-            "p3": {},
-            "p4": {}
-        }
+        self._result_counter["p1"].clear()
+        self._result_counter["p2"].clear()
+        self._result_counter["p3"].clear()
+        self._result_counter["p4"].clear()
 
     def _preprocess_image(self, im, width, height, crop_ratio, player):
 
