@@ -59,7 +59,7 @@ class DiscordBot(discord.Client):
 
             if (not self._main_voice_channel.is_playing() and 
                 botConfig.COMM_MODE == "voice"):
-                
+
                 self._main_voice_channel.play(
                     discord.FFmpegPCMAudio(message.audio), 
                     after=lambda e: print("Voice message sent"))
@@ -109,15 +109,15 @@ class DiscordBot(discord.Client):
             # frequency because these are time-based and very useful
             return True
 
-        if (message.messageType == "loadout_cash_prompt"):
-            # Always send loadout_cash_prompt
-            # messages because these are only sent once anyway
+        if (message.messageType == "loadout_cash_prompt" and 
+            self.loadout_message_sent == False):
+
+            # Always send loadout_cash_prompt messages regardless of frequency
+            # because these are only sent once anyway
             return True
         
         if (message.messageType == "none" or
-            time_elapsed < self._message_frequency or
-            (self.loadout_message_sent == True and 
-                message.messageType == "loadout_cash_prompt")):
+            time_elapsed < self._message_frequency):
 
             return False
         return True
