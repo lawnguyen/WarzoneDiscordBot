@@ -15,6 +15,12 @@ class Processor:
         self._mode = mode
 
         self.buy_back_count = 0
+        self._result_counter = {
+            "p1": {},
+            "p2": {},
+            "p3": {},
+            "p4": {}
+        }
 
     def is_game_started(self):
         im = getRectAsImage(self._display_rect)
@@ -30,95 +36,98 @@ class Processor:
             return True
         return False
     
-    def get_cash_total(self, iteration, process_count):
-        # TODO: expose the result counter and remove process_count because it was
-        # blocking the bot heartbeart causing disconnection from discord
-        result_counter = {
-            "p1": {},
-            "p2": {},
-            "p3": {},
-            "p4": {}
-        }
+    def get_cash_total(self, iteration):
+        if (iteration % 5 == 0):
+            # collect 5 iterations worth of results to weed out corrupted results
+            self._reset_result_counter()
 
         # Reset buy_back_count so we can get a fresh value every time
         self.buy_back_count = 0
 
-        while (process_count > 0):
-            im = getRectAsImage(self._display_rect)
-            width, height = im.size
+        im = getRectAsImage(self._display_rect)
+        width, height = im.size
 
-            today = str(date.today())
+        today = str(date.today())
 
-            # P1
-            p1_crop_ratio = CropRatio(0.034, 0.95, 0.08, 0.965)
-            p1_preprocessed_im = self._preprocess_image(im, width, height, p1_crop_ratio, "p1")
-            # P2
-            p2_crop_ratio = CropRatio(0.035, 0.88, 0.08, 0.895)
-            p2_preprocessed_im = self._preprocess_image(im, width, height, p2_crop_ratio, "p2")
-            # P3
-            p3_crop_ratio = CropRatio(0.035, 0.818, 0.08, 0.84)
-            p3_preprocessed_im = self._preprocess_image(im, width, height, p3_crop_ratio, "p3")
-            # P4
-            p4_crop_ratio = CropRatio(0.035, 0.75, 0.08, 0.768)
-            p4_preprocessed_im = self._preprocess_image(im, width, height, p4_crop_ratio, "p4")
+        # P1
+        p1_crop_ratio = CropRatio(0.034, 0.95, 0.08, 0.965)
+        p1_preprocessed_im = self._preprocess_image(im, width, height, p1_crop_ratio, "p1")
+        # P2
+        p2_crop_ratio = CropRatio(0.035, 0.88, 0.08, 0.895)
+        p2_preprocessed_im = self._preprocess_image(im, width, height, p2_crop_ratio, "p2")
+        # P3
+        p3_crop_ratio = CropRatio(0.035, 0.818, 0.08, 0.84)
+        p3_preprocessed_im = self._preprocess_image(im, width, height, p3_crop_ratio, "p3")
+        # P4
+        p4_crop_ratio = CropRatio(0.035, 0.75, 0.08, 0.768)
+        p4_preprocessed_im = self._preprocess_image(im, width, height, p4_crop_ratio, "p4")
 
-            if (self._mode == "1"):
-                cv2.imwrite("{}-p1-{}.png".format(today, iteration), p1_preprocessed_im)
-                cv2.imwrite("{}-p2-{}.png".format(today, iteration), p2_preprocessed_im)
-                cv2.imwrite("{}-p3-{}.png".format(today, iteration), p3_preprocessed_im)
-                cv2.imwrite("{}-p4-{}.png".format(today, iteration), p4_preprocessed_im)
+        if (self._mode == "1"):
+            cv2.imwrite("{}-p1-{}.png".format(today, iteration), p1_preprocessed_im)
+            cv2.imwrite("{}-p2-{}.png".format(today, iteration), p2_preprocessed_im)
+            cv2.imwrite("{}-p3-{}.png".format(today, iteration), p3_preprocessed_im)
+            cv2.imwrite("{}-p4-{}.png".format(today, iteration), p4_preprocessed_im)
 
-            tess_config = "--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$"
+        tess_config = "--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789$"
 
-            p1_read = pytesseract.image_to_string(p1_preprocessed_im, lang = "eng", \
-                config = tess_config)
-            p2_read = pytesseract.image_to_string(p2_preprocessed_im, lang = "eng", \
-                config = tess_config)
-            p3_read = pytesseract.image_to_string(p3_preprocessed_im, lang = "eng", \
-                config = tess_config)
-            p4_read = pytesseract.image_to_string(p4_preprocessed_im, lang = "eng", \
-                config = tess_config)
+        p1_read = pytesseract.image_to_string(p1_preprocessed_im, lang = "eng", \
+            config = tess_config)
+        p2_read = pytesseract.image_to_string(p2_preprocessed_im, lang = "eng", \
+            config = tess_config)
+        p3_read = pytesseract.image_to_string(p3_preprocessed_im, lang = "eng", \
+            config = tess_config)
+        p4_read = pytesseract.image_to_string(p4_preprocessed_im, lang = "eng", \
+            config = tess_config)
 
 
-            self._increment_result_counter(result_counter, "p1", p1_read)
-            self._increment_result_counter(result_counter, "p2", p2_read)
-            self._increment_result_counter(result_counter, "p3", p3_read)
-            self._increment_result_counter(result_counter, "p4", p4_read)
+        self._increment_result_counter(self._result_counter, "p1", p1_read)
+        self._increment_result_counter(self._result_counter, "p2", p2_read)
+        self._increment_result_counter(self._result_counter, "p3", p3_read)
+        self._increment_result_counter(self._result_counter, "p4", p4_read)
 
-            if (self._mode != "5"):
-                print("{} - p1 - iteration {}".format(today, iteration))
-                print(p1_read)
-                print("{} - p2 - iteration {}".format(today, iteration))
-                print(p2_read)
-                print("{} - p3 - iteration {}".format(today, iteration))
-                print(p3_read)
-                print("{} - p4 - iteration {}".format(today, iteration))
-                print(p4_read)
+        if (self._mode != "5"):
+            print("{} - p1 - iteration {}".format(today, iteration))
+            print(p1_read)
+            print("{} - p2 - iteration {}".format(today, iteration))
+            print(p2_read)
+            print("{} - p3 - iteration {}".format(today, iteration))
+            print(p3_read)
+            print("{} - p4 - iteration {}".format(today, iteration))
+            print(p4_read)
 
-            process_count -= 1
+        if (iteration % 5 == 0):
+            # We can get skewed results depending on the specific screenshot, so determine
+            # final total after taking 5 screenshots for each player, count up the results
+            # and parse the highest for each player for our total result
+            total = (
+                self._parse_read(max(self._result_counter["p1"], key=self._result_counter["p1"].get)) +
+                self._parse_read(max(self._result_counter["p2"], key=self._result_counter["p2"].get)) +
+                self._parse_read(max(self._result_counter["p3"], key=self._result_counter["p3"].get)) +
+                self._parse_read(max(self._result_counter["p4"], key=self._result_counter["p4"].get))
+            )
 
-        # We can get skewed results depending on the specific screenshot, so take
-        # _process_count_ number of screenshots for each player, count up the results
-        # and parse the highest for each player for our total result
-        total = (
-            self._parse_read(max(result_counter["p1"], key=result_counter["p1"].get)) +
-            self._parse_read(max(result_counter["p2"], key=result_counter["p2"].get)) +
-            self._parse_read(max(result_counter["p3"], key=result_counter["p3"].get)) +
-            self._parse_read(max(result_counter["p4"], key=result_counter["p4"].get))
-        )
+            if (self._mode != 5):
+                print("TOTAL: {}\n".format(total))
+                for k in self._result_counter:
+                        print(self._result_counter[k])
 
-        if (self._mode != 5):
-            print("TOTAL: {}\n".format(total))
-            # for k in result_counter:
-            #         print(result_counter[k])
+            return total
 
-        return total
+        return None
 
     def _increment_result_counter(self, result_counter, player, result):
         if (result in result_counter[player]):
             result_counter[player][result] += 1
         else:
             result_counter[player][result] = 1
+
+    def _reset_result_counter(self):
+        self._result_counter = {
+            "p1": {},
+            "p2": {},
+            "p3": {},
+            "p4": {}
+        }
 
     def _preprocess_image(self, im, width, height, crop_ratio, player):
 

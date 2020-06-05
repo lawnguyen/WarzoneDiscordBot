@@ -41,25 +41,26 @@ class DiscordBot(discord.Client):
     async def _main_loop(self):
         self._iteration += 1
 
-        cash_total = self._processor.get_cash_total(self._iteration, 1)
-        buy_back_count = self._processor.buy_back_count
-        message = messageCreator.create(
-            cash_total,
-            buy_back_count,
-            self._game_timer.get_time_elapsed())
+        cash_total = self._processor.get_cash_total(self._iteration)
+        if (cash_total):
+            buy_back_count = self._processor.buy_back_count
+            message = messageCreator.create(
+                cash_total,
+                buy_back_count,
+                self._game_timer.get_time_elapsed())
 
-        if (self._should_send_message(message)):
-            self._message_timer.restart_timer()
-            message_sent = await self._main_text_channel.send(
-                message.content, tts = True)
-            await message_sent.delete()
+            if (self._should_send_message(message)):
+                self._message_timer.restart_timer()
+                message_sent = await self._main_text_channel.send(
+                    message.content, tts = True)
+                await message_sent.delete()
 
-            if (message.messageType == "loadout_cash_prompt"):
-                # We realistically only want this message once
-                self.loadout_message_sent = True
+                if (message.messageType == "loadout_cash_prompt"):
+                    # We realistically only want this message once
+                    self.loadout_message_sent = True
 
-        if (self._mode == "4"):
-            input("Press Enter to continue...")
+            if (self._mode == "4"):
+                input("Press Enter to continue...")
 
     async def _init_discord_server_details(self):
         self._main_text_channel = None
