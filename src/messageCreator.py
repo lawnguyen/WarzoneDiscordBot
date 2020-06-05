@@ -60,6 +60,12 @@ _checkpoints = list(_checkpoint_message_map.keys())
 def create(cash_total, buy_back_count, time_elapsed):
     time_elapsed = int(time_elapsed)
 
+    if (time_elapsed > constants.CIRCLE_5_END + constants.CIRCLE_5_MOVING):
+        # Don't send any message past the end of 5th circle so we don't distract
+        # the near end-game, also the gas is quite slow at this point so warnings
+        # aren't really necessary
+        return Message(None, None, None)
+
     if (time_elapsed in _checkpoints):
         # Send checkpoint message
         message = _checkpoint_message_map[time_elapsed]
