@@ -1,6 +1,7 @@
 aiohttp==3.6.2
 async-timeout==3.0.1
 attrs==19.3.0
+cffi==1.14.0
 chardet==3.0.4
 comtypes==1.1.7
 Desktopmagic==14.3.11
@@ -14,8 +15,10 @@ numpy==1.18.3
 opencv-python==4.2.0.34
 Pillow==7.1.2
 PyAutoGUI==0.9.50
+pycparser==2.20
 PyGetWindow==0.0.8
 PyMsgBox==1.0.7
+PyNaCl==1.4.0
 pyperclip==1.8.0
 PyRect==0.1.4
 PyScreeze==0.1.26
@@ -24,6 +27,7 @@ pyttsx3==2.87
 PyTweening==1.0.3
 pywin32==227
 rope==0.17.0
+six==1.15.0
 typed-ast==1.4.1
 typing-extensions==3.7.4.2
 websockets==8.1
