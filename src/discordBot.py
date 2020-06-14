@@ -57,7 +57,8 @@ class DiscordBot(discord.Client):
                     message.content, tts = True)
                 await message_sent.delete()
 
-            if (not self._main_voice_channel.is_playing() and 
+            if (self._main_voice_channel and 
+                not self._main_voice_channel.is_playing() and 
                 botConfig.COMM_MODE == "voice"):
 
                 self._main_voice_channel.play(
