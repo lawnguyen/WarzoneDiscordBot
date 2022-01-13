@@ -13,7 +13,7 @@ mypy==0.770
 mypy-extensions==0.4.3
 numpy==1.18.3
 opencv-python==4.2.0.34
-Pillow==7.1.2
+Pillow==9.0.0
 PyAutoGUI==0.9.50
 pycparser==2.20
 PyGetWindow==0.0.8
