@@ -25,7 +25,7 @@ PyScreeze==0.1.26
 pytesseract==0.3.4
 pyttsx3==2.87
 PyTweening==1.0.3
-pywin32==227
+pywin32==301
 rope==0.17.0
 six==1.15.0
 typed-ast==1.4.1
